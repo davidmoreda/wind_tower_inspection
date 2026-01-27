@@ -1,0 +1,29 @@
+# Dataset (demasiado grande para Git)
+dataset/
+
+# Checkpoints y resultados de entrenamiento
+runs/
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Notebooks archivados (historial de versiones)
+notebooks_archive/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
