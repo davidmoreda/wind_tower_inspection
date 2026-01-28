@@ -747,9 +747,9 @@ if __name__ == '__main__':
         train_dataset,
         batch_size=CONFIG['batch_size'],
         shuffle=True,
-        num_workers=2,
-        pin_memory=True,
-        persistent_workers=True
+        num_workers=0,          # FIX: 0 workers para evitar OOM (vs 2)
+        pin_memory=False,       # FIX: Deshabilitado para evitar OOM en pin memory thread
+        persistent_workers=False  # FIX: No persistent workers
     )
 
     # Verificar una muestra
