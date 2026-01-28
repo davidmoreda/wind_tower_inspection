@@ -546,20 +546,30 @@ class FullModel(nn.Module):
 
 def compute_loss(original, reconstructed, vq_loss, config):
     """
-    FIX: Clamping de reconstructed a [0,1] antes de calcular métricas.
+    FIX: SSIM removido de backprop (solo métrica), MSE + VQ para gradientes.
     """
-    reconstructed = reconstructed.clamp(0, 1)  # FIX: Output clamping
+    # Para métricas: clamp
+    recon_clamped = reconstructed.clamp(0, 1)
+    
+    # MSE para backprop (sin clamp)
     mse_loss = F.mse_loss(reconstructed, original)
-    ssim_loss = 1 - ssim(reconstructed, original, data_range=1.0, size_average=True)
+    
+    # SSIM solo como métrica (NO gradientes)
+    with torch.no_grad():
+        ssim_val = ssim(recon_clamped, original, data_range=1.0, size_average=True)
+        ssim_loss = 1 - ssim_val
+    
+    # Total: solo MSE + VQ contribuyen gradientes
     total = (config['lambda_mse'] * mse_loss +
-             config['lambda_ssim'] * ssim_loss +
              config['lambda_vq'] * vq_loss)
+    
     return total, {
         'total': total.item(),
         'mse': mse_loss.item(),
         'ssim': ssim_loss.item(),
         'vq': vq_loss.item()
     }
+
 
 
 def save_visualization(original, reconstructed, rgb, epoch, save_dir):
