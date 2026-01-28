@@ -1,0 +1,31 @@
+ERRORES CRÍTICOS DETECTADOS EN v7 vs PAPER:
+
+1. DOWNSAMPLING INCORRECTO
+   v7: 3 downsamplings (8×)
+   Paper: 2 downsamplings (4×)
+   
+   Paper Encoder:
+   - Conv1: stride=2 → /2
+   - Conv2: stride=2 → /4
+   - Conv3: stride=1 → /4 (NO downsampling, solo feature extraction)
+   
+2. CODEBOOK INIT INCORRECTO
+   v7: normal_(0, 1.0)
+   Paper: uniform_(-1/num_embeddings, 1/num_embeddings)
+   
+   Para 512 embeddings: uniform(-0.00195, 0.00195)
+   
+3. ARQUITECTURA ENCODER/DECODER
+   Paper usa:
+   - kernel=4, stride=2 para downsample layers
+   - kernel=3, stride=1 para feature layers
+   - ResidualStack DESPUÉS de convs
+   
+4. SIN BATCHNORM EN ENCODER
+   Paper NO usa BatchNorm antes del VQ
+   Solo ResidualStack
+
+CONSECUENCIA:
+- Con 1280×720 y 4× downsampling → 320×180 latent (57,600 posiciones)
+- Esto ENTRA en FP16 (vs 65k anterior que overflow)
+- Codebook uniform pequeño → mejor matching inicial
