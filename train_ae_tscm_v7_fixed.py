@@ -777,6 +777,11 @@ if __name__ == '__main__':
         print(f'  Disponible: {(total_mem - torch.cuda.memory_allocated(0))/1e9:.2f} GB')
 
     # Crear modelo
+    # FIX: Limpiar caché CUDA antes de cargar modelo
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        torch.cuda.synchronize()
+    
     model = FullModel(CONFIG).to(device)
     total_params = sum(p.numel() for p in model.parameters())
     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
