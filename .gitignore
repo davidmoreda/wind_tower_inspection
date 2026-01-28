@@ -1,7 +1,6 @@
 # Dataset (demasiado grande para Git)
 
-# Checkpoints y resultados de entrenamiento
-runs/
+# Checkpoints y resultados de entrenamiento - rastreados con Git LFS
 *.pt
 *.pth
 

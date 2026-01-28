@@ -85,12 +85,8 @@ CONFIG = {
     'log_interval': 10,
 }
 
-# Directorio de salida
-SAVE_DIR = 'runs/ae_tscm_v8_' + datetime.now().strftime('%Y%m%d_%H%M%S')
-os.makedirs(SAVE_DIR, exist_ok=True)
-os.makedirs(os.path.join(SAVE_DIR, 'checkpoints'), exist_ok=True)
-os.makedirs(os.path.join(SAVE_DIR, 'visualizations'), exist_ok=True)
-print(f'Resultados se guardarán en: {SAVE_DIR}')
+# Directorio de salida - se inicializa en main() cuando se ejecuta como script
+SAVE_DIR = None
 
 # ============================================================
 # DATASET
@@ -725,6 +721,13 @@ def collect_encoder_outputs(model, dataloader, max_samples=8):
 # ============================================================
 
 if __name__ == '__main__':
+    # Inicializar SAVE_DIR aquí, no a nivel de módulo
+    SAVE_DIR = 'runs/ae_tscm_v8_' + datetime.now().strftime('%Y%m%d_%H%M%S')
+    os.makedirs(SAVE_DIR, exist_ok=True)
+    os.makedirs(os.path.join(SAVE_DIR, 'checkpoints'), exist_ok=True)
+    os.makedirs(os.path.join(SAVE_DIR, 'visualizations'), exist_ok=True)
+    print(f'Resultados se guardarán en: {SAVE_DIR}')
+    
     # Dataset
     train_dataset = MT001Dataset(
         CONFIG['data_dir'],
